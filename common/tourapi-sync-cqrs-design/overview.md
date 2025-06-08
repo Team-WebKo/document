@@ -18,7 +18,7 @@
   + CQRS 기반 분리된 Query 핸들러
 
 ## 아키텍처 흐름 - CQRS 기반
-```declarative
+```text
 [ TourAPI ]
      ↓
 [ ExternalApiClient ]
