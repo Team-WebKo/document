@@ -10,7 +10,8 @@ public void syncTourData() {
     // TourAPI 호출 → DB 저장 로직
 }
 ```
-+ `cron`표현식으로 지정 - [cron이란?](#cron이란?)
++ `cron`표현식으로 지정 
+- [cron이란?](#cron이란?)
 + 실행 주기 : 일, 시간, 분 단뒤 등 설정 가능
 
 ### 왜 필요한가?
