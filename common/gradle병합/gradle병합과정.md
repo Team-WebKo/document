@@ -80,7 +80,9 @@ Gradle이 자동으로 인식하는 buildSrc 디렉토리를 활용하여 공통
 
 ### 추루 계획
 
-지금은 빠르게 Convention을 만들기 위해 하드코딩했지만, 추후에는 `libs.versions.toml`을 활용해 dependency 버전 중앙 관리 할 계획이다.
+지금은 빠르게 Convention을 만들기 위해 하드코딩했지만, 추후에는 `libs.versions.toml`을 활용해 dependency 버전 중앙 관리
+
+spring-web-convention, jpa-convention 등으로 분리해서 모듈별로 필요한 설정만 적용되도록 리팩토링
 
 ---
 
