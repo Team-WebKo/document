@@ -16,10 +16,15 @@
 ### 특징 및 요구사항
 
 서비스 규모 - 비교적 가벼운 API 중심 서비스
+
 기술 스택 - Spring Boot, Java 17, JPA
+
 인프라 - Naver Cloud, Docker
+
 비용 - 최대한 저렴하게
+
 난이도 - APM도입이 처음이라 어렵지 않았으면 좋겠음
+
 요구사항 - API 응답시간, 오류, 흐름 시각화
 
 
@@ -33,22 +38,39 @@ APM 시스템을 도입하여,
 | 구분 | **Pinpoint** | **Prometheus + Grafana** |
 |------|---------------|---------------------------|
 | **개요** | Java 기반 APM (네이버 오픈소스) | 모니터링 툴 조합 |
-| **Spring+JPA연동 편의성** | 높음 (Agent 자동 트레이싱) | Micrometer + Actuator 설정 필요 |
+| **핵심** | 분산 트랜잭션 추적 (APM) | 시계열 기반 모니터링 (Metrics) |
 | **주요 기능** | 트랜잭션 추적, SQL/에러 분석, 호출 관계 맵 | CPU/Memory, 요청 수, 응답시간, 에러율 등 메트릭 |
 | **시각화** | 자체 Web UI | Grafana 대시보드 |
-| **도입 난이도** | 쉬움 (Agent만 추가) | Prometheus + Grafana 세팅 필요 |
-| **운영 리소스** | 중간 (Collector/Web 필요) | 높음 (Prometheus 서버 + Grafana 서버) |
+| **도입 난이도** | 쉬움 (Agent만 추가) | Prometheus + Grafana 세팅 필요(난이도 낮음) |
+| **데이터 단위** | 개별 트랜잭션(요청 단위) | 집계된 지표(Time Series) |
+| **목표** | 호출 흐름 및 병목 추적 | 시스템 상태 지표화 |
 | **비용** | 무료 (오픈소스) | 무료 (오픈소스) |
-| **트랜잭션 단위 분석** |  가능 (API 호출 흐름 파악) | 불가 (집계 중심) |
-| **커스터마이징** | 제한적 (UI 고정) |  높음 (대시보드 커스터마이징 가능) |
+| **커스터마이징** | 제한적 (UI 고정) |  높음 (커스터마이징 가능) |
 | **공식 근거** | [Pinpoint GitHub](https://github.com/pinpoint-apm/pinpoint)<br>[Pinpoint 문서](https://pinpoint-apm.gitbook.io/pinpoint/) | [Prometheus 공식문서](https://prometheus.io/docs/introduction/overview/)<br>[Spring Boot Metrics 가이드](https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.metrics.export.prometheus)<br>[Grafana Docs](https://grafana.com/docs/) |
 
 
+---
 
-### 결론 및 의사결정
 
-Pinpoint 도입 - Spring Boot + JPA 환경에서 트랜잭션 단위로 API 흐름을 추적 가능하며, 설정이 간단하고 네이버 오픈소스라 한국 자료가 많음
-향후 계획 - Prometheus + Grafana는 필요 할 시 추후 서버 리소스 모니터링용으로 도입
+### 의사결정
+
+
+#### 서비스 구조 기준 판단
+
+| 기준 | 설명 | 추천 |
+|------|------|------|
+| **단일 서버 + DB 구조** | 내부 호출이 단순하면 트랜잭션 이점 작음 | Prometheus+Grafana |
+| **응답시간 평균 / 에러율 중심 모니터링** | 집계 기반 메트릭이면 충분 |  Prometheus+Grafana |
+| **대시보드 커스터마이징** | Grafana가 훨씬 유연함 | Prometheus+Grafana |
+| **장애 원인 정확한 추적** | “어떤 요청 → 어떤 내부 호출”로 분석 가능 | Pinpoint |
+
+#### 결론
+
+지금 구조에서는 Prometheus + Grafana 조합이 실용적이지만,  
+Pinpoint는 단순히 트랜잭션이 많을 때만 유용한 게 아니라, 장애 시 문제 원인 추적 속도를 상당히 줄이는 도구라 메리트가 없지는 않다고 생각함.
+
+따라서 현재는 Prometheus 중심으로 가되, 추후 서비스 복잡도가 증가하면 pinpoint를 병행 도입하여 확장하는게 좋다고 생각.
+
 
 
 
